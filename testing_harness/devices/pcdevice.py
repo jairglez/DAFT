@@ -20,6 +20,7 @@ Class representing a PC-like Device with an IP.
 import os
 import sys
 import json
+import re
 
 from aft.logger import Logger as logger
 import aft.config as config
@@ -322,8 +323,9 @@ class PCDevice(Device):
         target = self._target_device.split("/")[-1]
         lsblk = ssh.remote_execute(self.dev_ip, ["lsblk"])
         lsblk = lsblk.split()
+        regex = re.compile(target + 'p*\d+')
         for line in lsblk:
-            if (target + "p") in line:
+            if regex.search(line):
                 line = ''.join(x for x in line if x.isalnum())
                 partitions.append(line)
 
